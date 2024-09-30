@@ -87,6 +87,14 @@ Steps:
 8. Disable any administrative public key forcing key rotation.
 9. Audit session history
 
+ENA Admin Tool Login 
+------
+We have changed the default login for the ENA Admin Tool.
+The default credentials are
+	username:enadm
+	password:M0tp@sse1!
+To connect please go https://\<whatever ip\>:8443\enadmintool
+
 Managing SSH Keys
 ------
 By default KeyBox will overwrite all values in the specified authorized_keys file for a system.  You can disable key management by editing KeyBoxConfig.properties file and use KeyBox only as a bastion host.  This file is located in the jetty/keybox/WEB-INF/classes directory. (or the src/main/resources directory if building from source)
