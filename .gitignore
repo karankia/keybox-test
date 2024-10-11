@@ -5,10 +5,12 @@
 
 *.ear
 
+
 .idea/*
 *.iml
 *.DS_Store
 
+target/classes
 /bin/
 
 # Eclipse Project Setting #
