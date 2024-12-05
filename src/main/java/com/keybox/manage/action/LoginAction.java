@@ -63,7 +63,7 @@ public class LoginAction extends ActionSupport implements ServletRequestAware, S
         HttpServletRequest request = ServletActionContext.getRequest();
         HttpSession session = request.getSession(true);
         request.changeSessionId();
-        _csrf = AuthUtil.generateCSRFToken(servletRequest.getSession());
+        _csrf = AuthUtil.generateCSRFToken(session);
         return SUCCESS;
     }
 
