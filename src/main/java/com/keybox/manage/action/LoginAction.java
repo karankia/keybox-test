@@ -23,6 +23,7 @@ import com.keybox.manage.model.User;
 import com.keybox.manage.util.OTPUtil;
 import com.opensymphony.xwork2.ActionSupport;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.InterceptorRef;
 import org.apache.struts2.convention.annotation.Result;
@@ -31,8 +32,10 @@ import org.apache.struts2.interceptor.ServletResponseAware;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 
 /**
@@ -57,6 +60,9 @@ public class LoginAction extends ActionSupport implements ServletRequestAware, S
             }
     )
     public String login() {
+        HttpServletRequest request = ServletActionContext.getRequest();
+        HttpSession session = request.getSession(true);
+        request.changeSessionId();
         _csrf = AuthUtil.generateCSRFToken(servletRequest.getSession());
         return SUCCESS;
     }
@@ -137,7 +143,13 @@ public class LoginAction extends ActionSupport implements ServletRequestAware, S
             }
     )
     public String logout() {
+        HttpServletResponse response = ServletActionContext.getResponse();
+        ServletActionContext.getResponse();
+        Cookie cookie = new Cookie("JSESSIONID", "");
+        cookie.setMaxAge(0); cookie.setPath("/");
         AuthUtil.deleteAllSession(servletRequest.getSession());
+        servletRequest.getSession().invalidate();
+
         return SUCCESS;
     }
 
