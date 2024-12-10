@@ -113,6 +113,11 @@ public class LoginAction extends ActionSupport implements ServletRequestAware, S
                     return INPUT;
                 }
 
+                HttpServletRequest request = ServletActionContext.getRequest();
+                HttpSession session = request.getSession(true);
+                // Regenerate session ID
+                request.changeSessionId();
+
                 AuthUtil.setAuthToken(servletRequest.getSession(), authToken);
                 AuthUtil.setUserId(servletRequest.getSession(), user.getId());
                 AuthUtil.setAuthType(servletRequest.getSession(), user.getAuthType());

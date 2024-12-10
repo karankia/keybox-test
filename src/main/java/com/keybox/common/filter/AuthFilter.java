@@ -103,27 +103,13 @@ public class AuthFilter implements Filter {
         }
 
         // If not admin redirect to login page
+        //if not admin redirect to login page
         if (!isAdmin) {
             AuthUtil.deleteAllSession(servletRequest.getSession());
             servletResponse.sendRedirect(servletRequest.getContextPath() + "/login.action");
-        } else {
-            // Ensure JSESSIONID cookie is Secure and HttpOnly
-            if (servletRequest.isSecure()) {
-                // Check if the request is over HTTPS
-                Cookie[] cookies = servletRequest.getCookies();
-                if (cookies != null) {
-                    for (Cookie cookie : cookies) {
-                        if ("JSESSIONID".equals(cookie.getName())) {
-                            cookie.setSecure(true);
-                            // Mark the cookie as Secure
-                            cookie.setHttpOnly(true);
-                            // Mark the cookie as HttpOnly
-                            servletResponse.addCookie(cookie);
-                            break;
-                        }
-                    }
-                }
-            } chain.doFilter(req, resp);
+        }
+        else{
+            chain.doFilter(req, resp);
         }
     }
 
