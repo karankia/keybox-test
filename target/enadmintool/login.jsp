@@ -52,28 +52,24 @@
 
     <div class="container">
         <p>
-        <s:actionerror/>
-        <s:form action="loginSubmit"  autocomplete="off">
-            <s:if test="#session['_csrf'] != null">
-                <s:hidden name="_csrf" value="%{#session['_csrf']}"/>
-            </s:if>
-            <s:else>
-                <s:hidden name="_csrf"/>
-            </s:else>
-            <s:textfield name="auth.username" label="Username"/>
-            <s:password name="auth.password" label="Password" value="" />
-            <s:if test="otpEnabled">
-                <s:textfield name="auth.otpToken" label="OTP Access Code"  autocomplete="off" value=""/>
-            </s:if>
-            <tr> <td>&nbsp;</td>
-                <td align="right">  <div id="login_btn" class="btn btn-default login" >Login</div></td>
-            </tr>
-        </s:form>
+            <s:actionerror/>
+            <s:form action="loginSubmit" method="post" enctype="application/x-www-form-urlencoded" autocomplete="off">
+                <s:if test="#session['_csrf'] != null">
+                    <s:hidden name="_csrf" value="%{#session['_csrf']}"/>
+                </s:if>
+                <s:else>
+                    <s:hidden name="_csrf"/>
+                </s:else>
+                <s:textfield name="auth.username" label="Username"/>
+                <s:password name="auth.password" label="Password" value="" />
+                <s:if test="otpEnabled">
+                    <s:textfield name="auth.otpToken" label="OTP Access Code"  autocomplete="off" value=""/>
+                </s:if>
+                <tr> <td>&nbsp;</td>
+                    <td align="right">  <div id="login_btn" class="btn btn-default login" >Login</div></td>
+                </tr>
+            </s:form>
         </p>
-
-
-
     </div>
-
 </body>
 </html>
