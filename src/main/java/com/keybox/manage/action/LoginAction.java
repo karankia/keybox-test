@@ -118,11 +118,11 @@ public class LoginAction extends ActionSupport implements ServletRequestAware, S
                 // Regenerate session ID
                 request.changeSessionId();
 
-                AuthUtil.setAuthToken(servletRequest.getSession(), authToken);
-                AuthUtil.setUserId(servletRequest.getSession(), user.getId());
-                AuthUtil.setAuthType(servletRequest.getSession(), user.getAuthType());
-                AuthUtil.setTimeout(servletRequest.getSession());
-                AuthUtil.setUsername(servletRequest.getSession(), user.getUsername());
+                AuthUtil.setAuthToken(session, authToken);
+                AuthUtil.setUserId(session, user.getId());
+                AuthUtil.setAuthType(session, user.getAuthType());
+                AuthUtil.setTimeout(session);
+                AuthUtil.setUsername(session, user.getUsername());
 
                 //for first time login redirect to set OTP
                 if (otpEnabled && StringUtils.isEmpty(sharedSecret)) {
