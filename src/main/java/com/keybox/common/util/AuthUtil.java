@@ -18,6 +18,8 @@ package com.keybox.common.util;
 import com.keybox.manage.util.EncryptionUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.struts2.util.TokenHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -36,6 +38,8 @@ public class AuthUtil {
     public static final String AUTH_TOKEN = "authToken";
     public static final String TIMEOUT = "timeout";
     public static final String CSRF_TOKEN_NM = "_csrf";
+
+    private static Logger loginAuditLogger = LoggerFactory.getLogger("com.keybox.manage.action.LoginAudit");
 
     private AuthUtil() {
     }
@@ -228,11 +232,15 @@ public class AuthUtil {
      *
      * @param session   http session
      * @param authToken authentication token
+     * @return
      */
-    public static void setAuthToken(HttpSession session, String authToken) {
+    public static Object setAuthToken(HttpSession session, String authToken) {
+        loginAuditLogger.info("AuthToken" + authToken);
         if (authToken != null && !authToken.trim().equals("")) {
+            loginAuditLogger.info("comes here");
             session.setAttribute(AUTH_TOKEN, EncryptionUtil.encrypt(authToken));
         }
+        return null;
     }
 
     /**

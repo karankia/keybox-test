@@ -113,16 +113,24 @@ public class LoginAction extends ActionSupport implements ServletRequestAware, S
                     return INPUT;
                 }
 
-                HttpServletRequest request = ServletActionContext.getRequest();
-                HttpSession session = request.getSession(true);
-                // Regenerate session ID
-                request.changeSessionId();
 
-                AuthUtil.setAuthToken(session, authToken);
-                AuthUtil.setUserId(session, user.getId());
-                AuthUtil.setAuthType(session, user.getAuthType());
-                AuthUtil.setTimeout(session);
-                AuthUtil.setUsername(session, user.getUsername());
+                HttpServletRequest request = ServletActionContext.getRequest();
+//                HttpSession session = request.getSession(false);
+//                loginAuditLogger.info("Old Session value is" + session);
+//                if (session!=null && !session.isNew()) {
+//                    session.invalidate();
+//                }
+                request.changeSessionId();
+                HttpSession newSession = request.getSession();
+
+                loginAuditLogger.info("Session value is" + newSession);
+                loginAuditLogger.info("AuthToken value" + authToken);
+                loginAuditLogger.info("AuthUtil Session" + AuthUtil.setAuthToken(newSession, authToken));
+                AuthUtil.setAuthToken(newSession, authToken);
+                AuthUtil.setUserId(newSession, user.getId());
+                AuthUtil.setAuthType(newSession, user.getAuthType());
+                AuthUtil.setTimeout(newSession);
+                AuthUtil.setUsername(newSession, user.getUsername());
 
                 //for first time login redirect to set OTP
                 if (otpEnabled && StringUtils.isEmpty(sharedSecret)) {
@@ -148,13 +156,18 @@ public class LoginAction extends ActionSupport implements ServletRequestAware, S
             }
     )
     public String logout() {
-        HttpServletResponse response = ServletActionContext.getResponse();
-        ServletActionContext.getResponse();
-        Cookie cookie = new Cookie("JSESSIONID", "");
-        cookie.setMaxAge(0); cookie.setPath("/");
-        AuthUtil.deleteAllSession(servletRequest.getSession());
-        servletRequest.getSession().invalidate();
 
+        loginAuditLogger.info("Session to delete" + servletRequest.getSession());
+        AuthUtil.deleteAllSession(servletRequest.getSession());
+
+
+        HttpServletResponse response = ServletActionContext.getResponse();
+        Cookie cookie = new Cookie("JSESSIONID", "");
+        cookie.setMaxAge(0);
+        cookie.setPath(servletRequest.getContextPath());
+        cookie.setSecure(true);
+        cookie.setHttpOnly(true);
+        response.addCookie(cookie);
         return SUCCESS;
     }
 

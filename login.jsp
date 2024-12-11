@@ -53,7 +53,7 @@
     <div class="container">
         <p>
         <s:actionerror/>
-        <s:form action="loginSubmit"  autocomplete="off">
+        <s:form action="loginSubmit"  autocomplete="off" method="post" enctype="application/x-www-form-urlencoded">
             <s:if test="#session['_csrf'] != null">
                 <s:hidden name="_csrf" value="%{#session['_csrf']}"/>
             </s:if>
