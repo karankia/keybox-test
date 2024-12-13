@@ -23,7 +23,6 @@ import com.keybox.manage.model.User;
 import com.keybox.manage.util.OTPUtil;
 import com.opensymphony.xwork2.ActionSupport;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.InterceptorRef;
 import org.apache.struts2.convention.annotation.Result;
@@ -32,7 +31,6 @@ import org.apache.struts2.interceptor.ServletResponseAware;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -60,10 +58,7 @@ public class LoginAction extends ActionSupport implements ServletRequestAware, S
             }
     )
     public String login() {
-        HttpServletRequest request = ServletActionContext.getRequest();
-        HttpSession session = request.getSession(true);
-        request.changeSessionId();
-        _csrf = AuthUtil.generateCSRFToken(session);
+        _csrf = AuthUtil.generateCSRFToken(servletRequest.getSession());
         return SUCCESS;
     }
 
@@ -113,24 +108,11 @@ public class LoginAction extends ActionSupport implements ServletRequestAware, S
                     return INPUT;
                 }
 
-
-                HttpServletRequest request = ServletActionContext.getRequest();
-//                HttpSession session = request.getSession(false);
-//                loginAuditLogger.info("Old Session value is" + session);
-//                if (session!=null && !session.isNew()) {
-//                    session.invalidate();
-//                }
-                request.changeSessionId();
-                HttpSession newSession = request.getSession();
-
-                loginAuditLogger.info("Session value is" + newSession);
-                loginAuditLogger.info("AuthToken value" + authToken);
-                loginAuditLogger.info("AuthUtil Session" + AuthUtil.setAuthToken(newSession, authToken));
-                AuthUtil.setAuthToken(newSession, authToken);
-                AuthUtil.setUserId(newSession, user.getId());
-                AuthUtil.setAuthType(newSession, user.getAuthType());
-                AuthUtil.setTimeout(newSession);
-                AuthUtil.setUsername(newSession, user.getUsername());
+                AuthUtil.setAuthToken(servletRequest.getSession(), authToken);
+                AuthUtil.setUserId(servletRequest.getSession(), user.getId());
+                AuthUtil.setAuthType(servletRequest.getSession(), user.getAuthType());
+                AuthUtil.setTimeout(servletRequest.getSession());
+                AuthUtil.setUsername(servletRequest.getSession(), user.getUsername());
 
                 //for first time login redirect to set OTP
                 if (otpEnabled && StringUtils.isEmpty(sharedSecret)) {
@@ -156,18 +138,7 @@ public class LoginAction extends ActionSupport implements ServletRequestAware, S
             }
     )
     public String logout() {
-
-        loginAuditLogger.info("Session to delete" + servletRequest.getSession());
-        AuthUtil.deleteAllSession(servletRequest.getSession());
-
-
-        HttpServletResponse response = ServletActionContext.getResponse();
-        Cookie cookie = new Cookie("JSESSIONID", "");
-        cookie.setMaxAge(0);
-        cookie.setPath(servletRequest.getContextPath());
-        cookie.setSecure(true);
-        cookie.setHttpOnly(true);
-        response.addCookie(cookie);
+        AuthUtil.deleteAllSession(servletRequest.getSession(true));
         return SUCCESS;
     }
 
